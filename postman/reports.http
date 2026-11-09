@@ -1,0 +1,33 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Monthly report for October 2026 (JSON)
+GET http://localhost:8080/api/reports?type=MONTHLY&date=2026-10-15
+Authorization: Bearer {{token}}
+
+### Daily / weekly (Monday to Sunday) / annual
+GET http://localhost:8080/api/reports?type=DAILY&date=2026-10-15
+Authorization: Bearer {{token}}
+
+###
+GET http://localhost:8080/api/reports?type=WEEKLY&date=2026-10-15
+Authorization: Bearer {{token}}
+
+###
+GET http://localhost:8080/api/reports?type=ANNUAL&date=2026-06-01
+Authorization: Bearer {{token}}
+
+### Download the PDF
+GET http://localhost:8080/api/reports/export?type=MONTHLY&date=2026-10-15&format=pdf
+Authorization: Bearer {{token}}
+
+### Download the CSV
+GET http://localhost:8080/api/reports/export?type=MONTHLY&date=2026-10-15&format=csv
+Authorization: Bearer {{token}}
+
+### Unknown type -> 400
+GET http://localhost:8080/api/reports?type=HOURLY
+Authorization: Bearer {{token}}
+
+### Unknown format -> 400
+GET http://localhost:8080/api/reports/export?type=MONTHLY&format=docx
+Authorization: Bearer {{token}}

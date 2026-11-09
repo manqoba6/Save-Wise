@@ -1,0 +1,11 @@
+target/
+.idea/
+*.iml
+.env
+node_modules/
+
+uploads/
+
+backend/src/main/resources/application-local.properties
+
+.env.production

@@ -1,0 +1,49 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Monthly rent (EXPENSE category 7), first posting on the given date
+POST http://localhost:8080/api/recurring-transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"transactionType":"EXPENSE","categoryId":7,"amount":6500.00,"frequency":"MONTHLY","startDate":"2026-11-01","description":"Rent"}
+
+### Monthly salary with an end date (INCOME category 1)
+POST http://localhost:8080/api/recurring-transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"transactionType":"INCOME","categoryId":1,"amount":15000.00,"frequency":"MONTHLY","startDate":"2026-10-30","endDate":"2027-06-30","description":"Salary"}
+
+### Invalid frequency -> 400
+POST http://localhost:8080/api/recurring-transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"transactionType":"EXPENSE","categoryId":7,"amount":100,"frequency":"FORTNIGHTLY","startDate":"2026-11-01"}
+
+### Income category on an EXPENSE schedule -> 400
+POST http://localhost:8080/api/recurring-transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"transactionType":"EXPENSE","categoryId":1,"amount":100,"frequency":"WEEKLY","startDate":"2026-11-01"}
+
+### List / pause / resume
+GET http://localhost:8080/api/recurring-transactions
+Authorization: Bearer {{token}}
+
+###
+PUT http://localhost:8080/api/recurring-transactions/1/pause
+Authorization: Bearer {{token}}
+
+###
+PUT http://localhost:8080/api/recurring-transactions/1/resume
+Authorization: Bearer {{token}}
+
+### What has this schedule posted so far?
+GET http://localhost:8080/api/recurring-transactions/1/history
+Authorization: Bearer {{token}}
+
+### ADMIN: run the daily job now (schedules due today or earlier will post)
+POST http://localhost:8080/api/recurring-transactions/run-due
+Authorization: Bearer {{token}}

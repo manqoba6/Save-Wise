@@ -1,0 +1,37 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Current settings (created with defaults on first call: LIGHT, ZAR, notifications on)
+GET http://localhost:8080/api/settings
+Authorization: Bearer {{token}}
+
+### Change them
+PUT http://localhost:8080/api/settings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"theme":"DARK","currency":"USD","notificationsEnabled":true}
+
+### Unknown currency -> 400
+PUT http://localhost:8080/api/settings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"theme":"DARK","currency":"QQQ","notificationsEnabled":true}
+
+### Invalid theme -> 400
+PUT http://localhost:8080/api/settings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"theme":"PURPLE","currency":"ZAR","notificationsEnabled":true}
+
+### Dropdown list
+GET http://localhost:8080/api/settings/currencies
+Authorization: Bearer {{token}}
+
+### Turn notifications off, then trigger a budget alert: no notification is created
+PUT http://localhost:8080/api/settings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"theme":"DARK","currency":"USD","notificationsEnabled":false}

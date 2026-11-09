@@ -1,0 +1,45 @@
+### Works in IntelliJ's HTTP client (or copy the calls into Postman).
+### 1. Register, then paste the accessToken into @token below.
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{"firstName":"Test","lastName":"User","email":"test@example.com","password":"password123"}
+
+###
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Categories (seeded: ids 1-4 are INCOME, 5-12 are EXPENSE)
+GET http://localhost:8080/api/categories?type=EXPENSE
+Authorization: Bearer {{token}}
+
+### Add income
+POST http://localhost:8080/api/income
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":1,"amount":15000.00,"description":"October salary","incomeDate":"2026-10-25"}
+
+### Add expense
+POST http://localhost:8080/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":5,"amount":250.50,"paymentMethod":"CARD","description":"Groceries","expenseDate":"2026-10-26"}
+
+### Search expenses
+GET http://localhost:8080/api/expenses?q=groc&from=2026-10-01&to=2026-10-31&page=0&size=10
+Authorization: Bearer {{token}}
+
+### Income category used on an expense -> 400
+POST http://localhost:8080/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":1,"amount":10,"expenseDate":"2026-10-26"}
+
+### Amount of zero -> 400
+POST http://localhost:8080/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":5,"amount":0,"expenseDate":"2026-10-26"}

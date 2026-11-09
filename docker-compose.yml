@@ -1,0 +1,46 @@
+# Runs the whole stack: PostgreSQL + the SaveWise API.
+#   1. copy .env.example to .env and fill it in
+#   2. docker compose up --build
+# The API is then at http://localhost:8080 (same URL the Postman collection uses).
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: savewise_db
+      POSTGRES_USER: savewise
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      # 5433 on your machine, so it does not clash with a PostgreSQL you already run on 5432
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U savewise -d savewise_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/savewise_db
+      DB_USER: savewise
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (at least 32 characters)}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Africa/Johannesburg}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
+  uploads:

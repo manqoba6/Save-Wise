@@ -1,0 +1,58 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Forgot password (always returns the same message). Copy the token from the server log.
+POST http://localhost:8080/api/auth/forgot-password
+Content-Type: application/json
+
+{"email":"test@example.com"}
+
+### Reset with the token from the log link (?token=...)
+POST http://localhost:8080/api/auth/reset-password
+Content-Type: application/json
+
+{"token":"PASTE_TOKEN_FROM_LOG","newPassword":"newpassword123"}
+
+### Change password (logged in)
+POST http://localhost:8080/api/auth/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"currentPassword":"password123","newPassword":"anotherpass456"}
+
+### View profile
+GET http://localhost:8080/api/users/me
+Authorization: Bearer {{token}}
+
+### Update profile
+PUT http://localhost:8080/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"firstName":"Test","lastName":"User","phone":"+27 82 123 4567","monthlyIncome":15000.00}
+
+### Upload a profile picture (IntelliJ: set a real file path)
+POST http://localhost:8080/api/users/me/picture
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="me.png"
+Content-Type: image/png
+
+< ./me.png
+--WebAppBoundary--
+
+### Fetch it back
+GET http://localhost:8080/api/users/me/picture
+Authorization: Bearer {{token}}
+
+### ADMIN: list users / deactivate one
+GET http://localhost:8080/api/users?page=0&size=20
+Authorization: Bearer {{token}}
+
+###
+PUT http://localhost:8080/api/users/2/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"enabled":false}

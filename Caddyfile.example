@@ -1,0 +1,7 @@
+# Optional: automatic HTTPS in front of the app on your own server (install Caddy, point your domain's DNS at the server).
+# Replace the domain, save as Caddyfile, and run:  caddy run
+# Set WEB_PORT=8081 in .env.production so the app listens on 8081 and Caddy owns ports 80 and 443.
+your-domain.example {
+    encode gzip
+    reverse_proxy 127.0.0.1:8081
+}

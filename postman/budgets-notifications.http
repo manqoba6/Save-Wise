@@ -1,0 +1,46 @@
+### Needs a token from register/login. Seeded EXPENSE categories: 5 Food, 6 Transport, 7 Rent ...
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Create a R1000 Food budget for October 2026
+POST http://localhost:8080/api/budgets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":5,"budgetMonth":"2026-10-01","budgetAmount":1000.00}
+
+### Same category + month again -> 409
+POST http://localhost:8080/api/budgets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":5,"budgetMonth":"2026-10-15","budgetAmount":500.00}
+
+### Spend R850 -> crosses 80%, creates a BUDGET_WARNING notification
+POST http://localhost:8080/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":5,"amount":850.00,"description":"Groceries","expenseDate":"2026-10-20"}
+
+### Spend R200 more -> crosses 100%, creates a BUDGET_CRITICAL notification
+POST http://localhost:8080/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"categoryId":5,"amount":200.00,"description":"Takeaway","expenseDate":"2026-10-22"}
+
+### Budget progress (spent, remaining, percentUsed, status)
+GET http://localhost:8080/api/budgets?month=2026-10-01
+Authorization: Bearer {{token}}
+
+### Notifications
+GET http://localhost:8080/api/notifications
+Authorization: Bearer {{token}}
+
+###
+GET http://localhost:8080/api/notifications/unread-count
+Authorization: Bearer {{token}}
+
+###
+PUT http://localhost:8080/api/notifications/read-all
+Authorization: Bearer {{token}}

@@ -1,0 +1,65 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Create two savings accounts
+POST http://localhost:8080/api/savings/accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"accountName":"Emergency Fund","targetAmount":20000.00}
+
+###
+POST http://localhost:8080/api/savings/accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"accountName":"Vacation"}
+
+### Deposit R1500 into account 1 (use your real account ids)
+POST http://localhost:8080/api/savings/deposit
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"accountId":1,"amount":1500.00,"description":"October top-up"}
+
+### Withdraw more than the balance -> 400
+POST http://localhost:8080/api/savings/withdraw
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"accountId":1,"amount":99999.00}
+
+### Transfer R500 from account 1 to account 2
+POST http://localhost:8080/api/savings/transfer
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"fromAccountId":1,"toAccountId":2,"amount":500.00}
+
+### History (all accounts, or add ?accountId=1)
+GET http://localhost:8080/api/savings/history
+Authorization: Bearer {{token}}
+
+### Create a goal
+POST http://localhost:8080/api/goals
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"title":"New laptop","targetAmount":12000.00,"deadline":"2027-03-31"}
+
+### Contribute R5000
+POST http://localhost:8080/api/goals/1/contribute
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"amount":5000.00}
+
+### Contribute R7000 -> reaches target, status COMPLETED, GOAL_ACHIEVED notification
+POST http://localhost:8080/api/goals/1/contribute
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"amount":7000.00}
+
+###
+GET http://localhost:8080/api/notifications
+Authorization: Bearer {{token}}

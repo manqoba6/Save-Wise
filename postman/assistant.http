@@ -1,0 +1,23 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+### The assistant analyses COMPLETED months, so it needs data from earlier months to say much.
+### Add a few months of income/expenses (use past dates) before trying these.
+
+### Everything, most urgent first, plus the health score
+GET http://localhost:8080/api/assistant/advice
+Authorization: Bearer {{token}}
+
+### Overspending for a given month
+GET http://localhost:8080/api/assistant/overspending?month=2026-10-01
+Authorization: Bearer {{token}}
+
+### Saving recommendations
+GET http://localhost:8080/api/assistant/saving-recommendations
+Authorization: Bearer {{token}}
+
+### Spending trends over the last 6 full months (2 to 12)
+GET http://localhost:8080/api/assistant/spending-trends?months=6
+Authorization: Bearer {{token}}
+
+### Forecasts: balance and savings in 1, 3, 6 and 12 months, plus goal forecasts
+GET http://localhost:8080/api/predictions
+Authorization: Bearer {{token}}

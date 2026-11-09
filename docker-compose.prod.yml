@@ -1,0 +1,65 @@
+# Production stack: nginx (serves the app, proxies /api) -> Spring Boot API -> PostgreSQL.
+# Only the web container is reachable from outside. The database and the API have NO published ports.
+#
+#   1. run scripts/generate-secrets  (creates .env.production with strong random secrets)
+#   2. edit PUBLIC_URL in .env.production
+#   3. docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+#
+# Put HTTPS in front of the web container (see DEPLOY.md). The login cookie is Secure, so it needs HTTPS.
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: savewise_db
+      POSTGRES_USER: savewise
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U savewise -d savewise_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    security_opt:
+      - no-new-privileges:true
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/savewise_db
+      DB_USER: savewise
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.production}
+      FRONTEND_URL: ${PUBLIC_URL:?Set PUBLIC_URL in .env.production}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Africa/Johannesburg}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads:/app/uploads
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${WEB_PORT:-80}:8080"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  pgdata:
+  uploads:

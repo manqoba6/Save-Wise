@@ -1,0 +1,9 @@
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### Current month
+GET http://localhost:8080/api/dashboard
+Authorization: Bearer {{token}}
+
+### A specific month
+GET http://localhost:8080/api/dashboard?month=2026-10-01
+Authorization: Bearer {{token}}
